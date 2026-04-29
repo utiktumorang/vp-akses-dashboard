@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
   # Sales Dashboard for VP
 
@@ -9,3 +10,7 @@
 
   Run `npm run dev` to start the development server.
   
+=======
+# vp-akses-dashboard
+dashboard untuk vp akses bisnis pt man
+>>>>>>> 051a9730c66765ea135051ee12896927fd5095b5
