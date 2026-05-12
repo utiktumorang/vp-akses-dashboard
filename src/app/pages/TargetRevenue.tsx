@@ -1,112 +1,189 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router";
 import {
   ChevronDown,
   ChevronRight,
   RefreshCcw,
   RotateCcw,
   Lock,
+  Unlock,
   AlertTriangle,
   CheckCircle2,
   X,
 } from "lucide-react";
 
 export default function TargetRevenue() {
+  const navigate = useNavigate();
+
   const [pageState, setPageState] = useState<
-    "draft-unready" | "draft-ready" | "confirm-lock" | "locked"
-  >("draft-unready");
+    | "draft-unready"
+    | "draft-ready"
+    | "confirm-lock"
+    | "confirm-unlock"
+    | "locked"
+  >("locked");
 
-  const [distributionMode, setDistributionMode] = useState<
-    "equal" | "manual"
-  >("manual");
+  const [distributionMode, setDistributionMode] =
+    useState<"equal" | "manual">("manual");
 
-  const [openQuarter, setOpenQuarter] = useState({
-    Q1: true,
-    Q2: true,
-    Q3: false,
-    Q4: false,
-  });
+  const [unlockReason, setUnlockReason] =
+    useState("");
 
-  const [totalTarget, setTotalTarget] = useState(1000000000);
+  const [openQuarter, setOpenQuarter] =
+    useState({
+      Q1: true,
+      Q2: true,
+      Q3: false,
+      Q4: false,
+    });
 
-  const [monthlyData, setMonthlyData] = useState([
-    {
-      quarter: "Q1",
-      items: [
-        { month: "Januari", revenue: 120000000, compare: "+3%" },
-        { month: "Februari", revenue: 55000000, compare: "-1%" },
-        { month: "Maret", revenue: 75000000, compare: "-2%" },
-      ],
-    },
-    {
-      quarter: "Q2",
-      items: [
-        { month: "April", revenue: 65000000, compare: "-2%" },
-        { month: "Mei", revenue: 85000000, compare: "-2%" },
-        { month: "Juni", revenue: 150000000, compare: "+4%" },
-      ],
-    },
-    {
-      quarter: "Q3",
-      items: [
-        { month: "Juli", revenue: 80000000, compare: "+2%" },
-        { month: "Agustus", revenue: 90000000, compare: "+1%" },
-        { month: "September", revenue: 70000000, compare: "-1%" },
-      ],
-    },
-    {
-      quarter: "Q4",
-      items: [
-        { month: "Oktober", revenue: 95000000, compare: "+4%" },
-        { month: "November", revenue: 110000000, compare: "+6%" },
-        { month: "Desember", revenue: 140000000, compare: "+8%" },
-      ],
-    },
-  ]);
+  const [totalTarget, setTotalTarget] =
+    useState(1000000000);
+
+  const [monthlyData, setMonthlyData] =
+    useState([
+      {
+        quarter: "Q1",
+        items: [
+          {
+            month: "Januari",
+            revenue: 120000000,
+            compare: "+3%",
+          },
+          {
+            month: "Februari",
+            revenue: 55000000,
+            compare: "-1%",
+          },
+          {
+            month: "Maret",
+            revenue: 75000000,
+            compare: "-2%",
+          },
+        ],
+      },
+      {
+        quarter: "Q2",
+        items: [
+          {
+            month: "April",
+            revenue: 65000000,
+            compare: "-2%",
+          },
+          {
+            month: "Mei",
+            revenue: 85000000,
+            compare: "-2%",
+          },
+          {
+            month: "Juni",
+            revenue: 150000000,
+            compare: "+4%",
+          },
+        ],
+      },
+      {
+        quarter: "Q3",
+        items: [
+          {
+            month: "Juli",
+            revenue: 80000000,
+            compare: "+2%",
+          },
+          {
+            month: "Agustus",
+            revenue: 90000000,
+            compare: "+1%",
+          },
+          {
+            month: "September",
+            revenue: 70000000,
+            compare: "-1%",
+          },
+        ],
+      },
+      {
+        quarter: "Q4",
+        items: [
+          {
+            month: "Oktober",
+            revenue: 95000000,
+            compare: "+4%",
+          },
+          {
+            month: "November",
+            revenue: 110000000,
+            compare: "+6%",
+          },
+          {
+            month: "Desember",
+            revenue: 140000000,
+            compare: "+8%",
+          },
+        ],
+      },
+    ]);
 
   const isLocked = pageState === "locked";
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("id-ID").format(value);
+    return new Intl.NumberFormat(
+      "id-ID"
+    ).format(value);
   };
 
   const parseCurrency = (value: string) => {
     return Number(value.replace(/\D/g, ""));
   };
 
-  const monthlyAllocated = monthlyData.reduce((acc, quarter) => {
-    return (
-      acc +
-      quarter.items.reduce((sum, item) => {
-        return sum + item.revenue;
-      }, 0)
-    );
-  }, 0);
+  const monthlyAllocated = monthlyData.reduce(
+    (acc, quarter) => {
+      return (
+        acc +
+        quarter.items.reduce(
+          (sum, item) => sum + item.revenue,
+          0
+        )
+      );
+    },
+    0
+  );
 
   const allocationPercent = Math.min(
     100,
-    Math.round((monthlyAllocated / totalTarget) * 100)
+    Math.round(
+      (monthlyAllocated / totalTarget) * 100
+    )
   );
 
   const currentState =
-    allocationPercent >= 100 ? "ready" : "unready";
+    allocationPercent >= 100
+      ? "ready"
+      : "unready";
 
   const handleTotalTargetChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const value = parseCurrency(e.target.value);
+    const value = parseCurrency(
+      e.target.value
+    );
 
     setTotalTarget(value);
 
     if (distributionMode === "equal") {
-      const equalAmount = Math.round(value / 12);
+      const equalAmount = Math.round(
+        value / 12
+      );
 
       setMonthlyData((prev) =>
         prev.map((quarter) => ({
           ...quarter,
-          items: quarter.items.map((item) => ({
-            ...item,
-            revenue: equalAmount,
-          })),
+          items: quarter.items.map(
+            (item) => ({
+              ...item,
+              revenue: equalAmount,
+            })
+          ),
         }))
       );
     }
@@ -118,15 +195,19 @@ export default function TargetRevenue() {
     setDistributionMode(mode);
 
     if (mode === "equal") {
-      const equalAmount = Math.round(totalTarget / 12);
+      const equalAmount = Math.round(
+        totalTarget / 12
+      );
 
       setMonthlyData((prev) =>
         prev.map((quarter) => ({
           ...quarter,
-          items: quarter.items.map((item) => ({
-            ...item,
-            revenue: equalAmount,
-          })),
+          items: quarter.items.map(
+            (item) => ({
+              ...item,
+              revenue: equalAmount,
+            })
+          ),
         }))
       );
     }
@@ -142,8 +223,9 @@ export default function TargetRevenue() {
     setMonthlyData((prev) => {
       const updated = [...prev];
 
-      updated[quarterIndex].items[itemIndex].revenue =
-        parsed;
+      updated[quarterIndex].items[
+        itemIndex
+      ].revenue = parsed;
 
       return updated;
     });
@@ -155,15 +237,22 @@ export default function TargetRevenue() {
 
         {/* HEADER */}
         <div className="flex items-start justify-between mb-8">
+
           <div>
-            <h1 className="text-[44px] leading-[48px] font-semibold tracking-[-1px] text-[#111827]">
+            <h1 className="text-[32px] leading-[38px] font-semibold text-[#111827]">
               Target Revenue Tahunan
             </h1>
 
-            <div className="flex items-center gap-3 mt-3 text-[15px] text-gray-500">
-              <span>Baseline untuk performa dashboard</span>
+            <div className="flex items-center gap-3 mt-2 text-[14px] text-gray-500">
+              <span>
+                Baseline untuk performa dashboard
+              </span>
+
               <span>•</span>
-              <span>Senin, 4 Mei 2026</span>
+
+              <span>
+                Senin, 4 Mei 2026
+              </span>
             </div>
           </div>
 
@@ -187,6 +276,7 @@ export default function TargetRevenue() {
             {/* STATUS */}
             <div className="bg-white border border-gray-200 rounded-lg px-5 h-12 flex items-center shadow-sm">
               <div className="flex items-center gap-3">
+
                 <span className="text-sm text-gray-500">
                   Status:
                 </span>
@@ -209,24 +299,30 @@ export default function TargetRevenue() {
         {/* TOP GRID */}
         <div className="grid grid-cols-12 gap-6 mb-6">
 
-          {/* LEFT CARD */}
+          {/* LEFT */}
           <div className="col-span-7 bg-white rounded-lg border border-gray-200 p-7 shadow-sm">
 
             <h2 className="text-[28px] font-semibold mb-7">
               Target Revenue Tahunan
             </h2>
 
-            {/* TARGET INPUT */}
+            {/* INPUT */}
             <div className="mb-7">
+
               <label className="block text-[14px] font-medium mb-3 text-gray-700">
-                Total Target Revenue (Rupiah)
+                Total Target Revenue
+                (Rupiah)
               </label>
 
               <input
                 type="text"
                 disabled={isLocked}
-                value={formatCurrency(totalTarget)}
-                onChange={handleTotalTargetChange}
+                value={formatCurrency(
+                  totalTarget
+                )}
+                onChange={
+                  handleTotalTargetChange
+                }
                 className={`
                   w-full
                   h-[72px]
@@ -234,7 +330,6 @@ export default function TargetRevenue() {
                   border
                   px-6
                   text-[32px]
-                  tracking-[-1px]
                   font-semibold
                   ${
                     isLocked
@@ -245,12 +340,14 @@ export default function TargetRevenue() {
               />
 
               <p className="text-sm text-gray-400 mt-2">
-                Isi target tahunan untuk revenue tahun ini
+                Isi target tahunan untuk
+                revenue tahun ini
               </p>
             </div>
 
             {/* DISTRIBUTION */}
             <div className="mb-7">
+
               <h3 className="text-[16px] font-semibold mb-4">
                 Metode Distribusi Bulanan
               </h3>
@@ -260,9 +357,14 @@ export default function TargetRevenue() {
                 <label className="flex items-center gap-3 text-[14px]">
                   <input
                     type="radio"
-                    checked={distributionMode === "equal"}
+                    checked={
+                      distributionMode ===
+                      "equal"
+                    }
                     onChange={() =>
-                      handleDistributionMode("equal")
+                      handleDistributionMode(
+                        "equal"
+                      )
                     }
                     disabled={isLocked}
                   />
@@ -273,9 +375,14 @@ export default function TargetRevenue() {
                 <label className="flex items-center gap-3 text-[14px]">
                   <input
                     type="radio"
-                    checked={distributionMode === "manual"}
+                    checked={
+                      distributionMode ===
+                      "manual"
+                    }
                     onChange={() =>
-                      handleDistributionMode("manual")
+                      handleDistributionMode(
+                        "manual"
+                      )
                     }
                     disabled={isLocked}
                   />
@@ -296,7 +403,9 @@ export default function TargetRevenue() {
                 <span className="text-[15px] font-semibold">
                   Rp.{" "}
                   {formatCurrency(
-                    Math.round(totalTarget / 12)
+                    Math.round(
+                      totalTarget / 12
+                    )
                   )}
                 </span>
               </div>
@@ -313,7 +422,8 @@ export default function TargetRevenue() {
 
               <div className="h-[64px] px-5 flex items-center justify-between">
                 <span className="text-[14px] text-gray-600">
-                  Kebutuhan Pencapaian per bulan
+                  Kebutuhan Pencapaian per
+                  bulan
                 </span>
 
                 <span className="text-[15px] font-semibold">
@@ -323,7 +433,7 @@ export default function TargetRevenue() {
             </div>
           </div>
 
-          {/* RIGHT CARD */}
+          {/* RIGHT */}
           <div className="col-span-5 bg-white rounded-lg border border-gray-200 p-7 shadow-sm">
 
             <h2 className="text-[28px] font-semibold mb-7">
@@ -342,29 +452,31 @@ export default function TargetRevenue() {
                 gap-3
                 mb-7
                 ${
-                  currentState === "unready"
+                  currentState ===
+                  "unready"
                     ? "bg-orange-50 border-orange-200 text-orange-600"
                     : "bg-green-50 border-green-200 text-green-700"
                 }
               `}
             >
-              {currentState === "unready" ? (
+              {currentState ===
+              "unready" ? (
                 <AlertTriangle size={18} />
               ) : (
                 <CheckCircle2 size={18} />
               )}
 
               <span className="text-[14px] font-medium">
-                {currentState === "unready"
+                {currentState ===
+                "unready"
                   ? "Target Revenue belum teralokasi seluruhnya."
                   : "Target Revenue sudah teralokasi seluruhnya."}
               </span>
             </div>
 
-            {/* DONUT + INFO */}
+            {/* DONUT */}
             <div className="flex items-center gap-8 mb-7">
 
-              {/* DONUT */}
               <div className="relative w-[170px] h-[170px]">
 
                 <svg
@@ -372,18 +484,14 @@ export default function TargetRevenue() {
                   viewBox="0 0 36 36"
                 >
                   <path
-                    d="M18 2.5
-                    a 15.5 15.5 0 0 1 0 31
-                    a 15.5 15.5 0 0 1 0 -31"
+                    d="M18 2.5 a 15.5 15.5 0 0 1 0 31 a 15.5 15.5 0 0 1 0 -31"
                     fill="none"
                     stroke="#E5E7EB"
                     strokeWidth="3"
                   />
 
                   <path
-                    d="M18 2.5
-                    a 15.5 15.5 0 0 1 0 31
-                    a 15.5 15.5 0 0 1 0 -31"
+                    d="M18 2.5 a 15.5 15.5 0 0 1 0 31 a 15.5 15.5 0 0 1 0 -31"
                     fill="none"
                     stroke="#16A34A"
                     strokeWidth="3"
@@ -413,47 +521,56 @@ export default function TargetRevenue() {
 
                   <h3 className="text-[22px] font-semibold">
                     Rp.{" "}
-                    {formatCurrency(monthlyAllocated)}
+                    {formatCurrency(
+                      monthlyAllocated
+                    )}
                   </h3>
                 </div>
 
                 <div>
                   <p className="text-sm text-gray-500 mb-1">
-                    Sisa yang belum teralokasi
+                    Sisa yang belum
+                    teralokasi
                   </p>
 
                   <h3 className="text-[22px] font-semibold text-red-500">
                     Rp.{" "}
                     {formatCurrency(
-                      totalTarget - monthlyAllocated
+                      totalTarget -
+                        monthlyAllocated
                     )}
                   </h3>
                 </div>
               </div>
             </div>
 
-            {/* LAST UPDATE */}
+            {/* UPDATE INFO */}
             <div className="rounded-lg border border-gray-200 px-5 py-4 flex items-center justify-between">
 
               <div className="space-y-3 text-sm text-gray-500">
-                <p>Terakhir diperbarui</p>
+                <p>
+                  Terakhir diperbarui
+                </p>
+
                 <p>Diperbarui oleh</p>
               </div>
 
               <div className="space-y-3 text-right text-[14px]">
                 <p>
-                  Kamis, 7 Mei 2026 - 19:54
+                  Kamis, 7 Mei 2026 -
+                  19:54
                 </p>
 
                 <p>
-                  Ali Putera (VP Akses Bisnis)
+                  Ali Putera (VP Akses
+                  Bisnis)
                 </p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* TABLE CARD */}
+        {/* TABLE */}
         <div className="bg-white rounded-lg border border-gray-200 p-7 shadow-sm">
 
           {/* HEADER */}
@@ -468,7 +585,9 @@ export default function TargetRevenue() {
 
                 <button
                   onClick={() =>
-                    handleDistributionMode("equal")
+                    handleDistributionMode(
+                      "equal"
+                    )
                   }
                   className="h-11 px-5 rounded-lg border border-gray-200 bg-white flex items-center gap-2 text-[14px] font-medium"
                 >
@@ -511,24 +630,29 @@ export default function TargetRevenue() {
 
               <tbody>
                 {monthlyData.map(
-                  (quarter, quarterIndex) => (
+                  (
+                    quarter,
+                    quarterIndex
+                  ) => (
                     <React.Fragment
                       key={quarter.quarter}
                     >
-
-                      {/* QUARTER */}
                       <tr className="border-t border-gray-100 bg-gray-50/50">
                         <td className="px-5 h-[58px]">
 
                           <button
                             onClick={() =>
-                              setOpenQuarter((prev) => ({
-                                ...prev,
-                                [quarter.quarter]:
-                                  !prev[
-                                    quarter.quarter as keyof typeof prev
-                                  ],
-                              }))
+                              setOpenQuarter(
+                                (
+                                  prev
+                                ) => ({
+                                  ...prev,
+                                  [quarter.quarter]:
+                                    !prev[
+                                      quarter.quarter as keyof typeof prev
+                                    ],
+                                })
+                              )
                             }
                             className="flex items-center gap-3 font-semibold text-[14px]"
                           >
@@ -554,14 +678,18 @@ export default function TargetRevenue() {
                         <td colSpan={3} />
                       </tr>
 
-                      {/* ITEMS */}
                       {openQuarter[
                         quarter.quarter as keyof typeof openQuarter
                       ] &&
                         quarter.items.map(
-                          (item, itemIndex) => (
+                          (
+                            item,
+                            itemIndex
+                          ) => (
                             <tr
-                              key={item.month}
+                              key={
+                                item.month
+                              }
                               className="border-t border-gray-100"
                             >
 
@@ -573,12 +701,15 @@ export default function TargetRevenue() {
                                 <input
                                   disabled={
                                     isLocked ||
-                                    distributionMode === "equal"
+                                    distributionMode ===
+                                      "equal"
                                   }
                                   value={formatCurrency(
                                     item.revenue
                                   )}
-                                  onChange={(e) =>
+                                  onChange={(
+                                    e
+                                  ) =>
                                     handleMonthlyRevenueChange(
                                       quarterIndex,
                                       itemIndex,
@@ -594,7 +725,8 @@ export default function TargetRevenue() {
                                     text-[14px]
                                     ${
                                       isLocked ||
-                                      distributionMode === "equal"
+                                      distributionMode ===
+                                        "equal"
                                         ? "bg-gray-50 border-gray-200 text-gray-500"
                                         : "bg-white border-gray-200 focus:border-green-500 focus:ring-4 focus:ring-green-100 outline-none"
                                     }
@@ -607,7 +739,9 @@ export default function TargetRevenue() {
                                   (item.revenue /
                                     totalTarget) *
                                   100
-                                ).toFixed(1)}
+                                ).toFixed(
+                                  1
+                                )}
                                 %
                               </td>
 
@@ -617,13 +751,17 @@ export default function TargetRevenue() {
                                   text-[14px]
                                   font-semibold
                                   ${
-                                    item.compare.includes("+")
+                                    item.compare.includes(
+                                      "+"
+                                    )
                                       ? "text-green-600"
                                       : "text-red-500"
                                   }
                                 `}
                               >
-                                {item.compare}
+                                {
+                                  item.compare
+                                }
                               </td>
                             </tr>
                           )
@@ -635,82 +773,186 @@ export default function TargetRevenue() {
             </table>
           </div>
 
-          {/* ACTION */}
-          <div className="flex items-center justify-end gap-3 mt-6">
+          {/* FOOTER ACTION */}
+          <div className="flex items-center justify-between mt-6">
 
-            <button className="h-11 px-5 rounded-lg border border-gray-200 bg-white text-[14px] font-medium">
-              Simpan Draft
+            {/* HISTORY */}
+            <button
+              onClick={() =>
+                navigate("/target-revenue/history")
+              }
+              className="flex items-center gap-2 text-[14px] text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              <span className="font-medium">
+                Riwayat Perubahan
+              </span>
+
+              <RotateCcw size={15} />
             </button>
 
-            {!isLocked ? (
-              <button
-                onClick={() =>
-                  setPageState("confirm-lock")
-                }
-                className="h-11 px-5 rounded-lg bg-green-600 text-white text-[14px] font-medium flex items-center gap-2"
-              >
-                <Lock size={16} />
-                Kunci Target
+            {/* RIGHT ACTION */}
+            <div className="flex items-center gap-3">
+
+              <button className="h-11 px-5 rounded-lg border border-gray-200 bg-white text-[14px] font-medium">
+                Simpan Draft
               </button>
-            ) : (
-              <button className="h-11 px-5 rounded-lg border border-gray-200 bg-white text-[14px] font-medium flex items-center gap-2">
-                <Lock size={16} />
-                Ubah Target
-              </button>
-            )}
+
+              {!isLocked ? (
+                <button
+                  onClick={() =>
+                    setPageState(
+                      "confirm-lock"
+                    )
+                  }
+                  className="h-11 px-5 rounded-lg bg-green-600 text-white text-[14px] font-medium flex items-center gap-2"
+                >
+                  <Lock size={16} />
+                  Kunci Target
+                </button>
+              ) : (
+                <button
+                  onClick={() =>
+                    setPageState(
+                      "confirm-unlock"
+                    )
+                  }
+                  className="h-11 px-5 rounded-lg border border-gray-200 bg-white text-[14px] font-medium flex items-center gap-2"
+                >
+                  <Unlock size={16} />
+                  Ubah Target
+                </button>
+              )}
+            </div>
           </div>
         </div>
+
+        {/* LOCK MODAL */}
+        {pageState === "confirm-lock" && (
+          <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+
+            <div className="w-[520px] bg-white rounded-lg shadow-xl p-6">
+
+              <div className="flex items-start justify-between mb-5">
+
+                <h2 className="text-2xl font-semibold">
+                  Kunci Target
+                </h2>
+
+                <button
+                  onClick={() =>
+                    setPageState(
+                      "draft-ready"
+                    )
+                  }
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <p className="text-gray-600 mb-8">
+                Apakah anda yakin untuk
+                mengunci Target Revenue
+                tahunan ini?
+              </p>
+
+              <div className="flex items-center justify-end gap-3">
+
+                <button
+                  onClick={() =>
+                    setPageState(
+                      "draft-ready"
+                    )
+                  }
+                  className="h-11 px-5 border rounded-lg"
+                >
+                  Batal
+                </button>
+
+                <button
+                  onClick={() =>
+                    setPageState("locked")
+                  }
+                  className="h-11 px-5 bg-green-600 text-white rounded-lg"
+                >
+                  Ya, Kunci
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* UNLOCK MODAL */}
+        {pageState === "confirm-unlock" && (
+          <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+
+            <div className="w-[520px] bg-white rounded-lg shadow-xl p-6">
+
+              <div className="flex items-start justify-between mb-5">
+
+                <h2 className="text-2xl font-semibold">
+                  Ubah Target
+                </h2>
+
+                <button
+                  onClick={() =>
+                    setPageState("locked")
+                  }
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <p className="text-gray-600 mb-6">
+                Anda akan membuka kunci
+                Target Revenue tahunan ini.
+                Silakan isi alasan di bawah
+                ini untuk melanjutkan.
+              </p>
+
+              <div className="mb-6">
+
+                <label className="block text-[14px] font-medium mb-2">
+                  Alasan
+                </label>
+
+                <textarea
+                  value={unlockReason}
+                  onChange={(e) =>
+                    setUnlockReason(
+                      e.target.value
+                    )
+                  }
+                  placeholder="Contoh: target bulan 7 yang tidak sesuai"
+                  className="w-full h-[100px] rounded-lg border border-gray-200 px-4 py-3 text-[14px] resize-none focus:border-green-500 focus:ring-4 focus:ring-green-100 outline-none"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3">
+
+                <button
+                  onClick={() =>
+                    setPageState("locked")
+                  }
+                  className="h-11 px-5 border rounded-lg"
+                >
+                  Batal
+                </button>
+
+                <button
+                  onClick={() =>
+                    setPageState(
+                      "draft-ready"
+                    )
+                  }
+                  className="h-11 px-5 bg-green-600 text-white rounded-lg"
+                >
+                  Ubah
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-
-      {/* MODAL */}
-      {pageState === "confirm-lock" && (
-        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
-
-          <div className="w-[520px] bg-white rounded-lg shadow-xl p-6">
-
-            <div className="flex items-start justify-between mb-5">
-
-              <h2 className="text-2xl font-semibold">
-                Kunci Target
-              </h2>
-
-              <button
-                onClick={() =>
-                  setPageState("draft-ready")
-                }
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            <p className="text-gray-600 mb-8">
-              Apakah anda yakin untuk
-              mengunci Target Revenue tahunan ini?
-            </p>
-
-            <div className="flex items-center justify-end gap-3">
-
-              <button
-                onClick={() =>
-                  setPageState("draft-ready")
-                }
-                className="h-11 px-5 border rounded-lg"
-              >
-                Batal
-              </button>
-
-              <button
-                onClick={() =>
-                  setPageState("locked")
-                }
-                className="h-11 px-5 bg-green-600 text-white rounded-lg"
-              >
-                Ya, Kunci
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

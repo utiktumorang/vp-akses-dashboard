@@ -8,6 +8,7 @@ import ChurnRateDetail from "./pages/ChurnRateDetail";
 import TargetRevenue from "./pages/TargetRevenue";
 import { DashboardLayout } from "./components/DashboardLayout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import TargetRevenueHistory from './pages/TargetRevenueHistory';
 
 const DashboardWrapper = () => (
   <ProtectedRoute>
@@ -74,4 +75,15 @@ export const router = createBrowserRouter([
     </ProtectedRoute>
   ),
 },
+{
+  path: "/target-revenue/history",
+  element: (
+    <ProtectedRoute>
+      <DashboardLayout>
+        <TargetRevenueHistory />
+      </DashboardLayout>
+    </ProtectedRoute>
+  ),
+},
+
 ]);

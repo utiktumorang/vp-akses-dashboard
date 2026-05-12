@@ -6,6 +6,7 @@ export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -13,78 +14,187 @@ export default function Login() {
     e.preventDefault();
     setError('');
 
-    // Simple mock authentication
     if (username && password) {
       login(username);
       navigate('/dashboard/growth');
     } else {
-      setError('Username dan password harus diisi');
+      setError('ID Karyawan dan Password harus diisi');
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center p-6">
-      <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-            </svg>
-          </div>
-          <h1 className="text-2xl font-semibold text-gray-900 mb-2">
-            Dashboard VP Access Business
-          </h1>
-          <p className="text-sm text-gray-600">
-            Silakan login untuk melanjutkan
-          </p>
-        </div>
+    <div className="relative min-h-screen overflow-hidden bg-[#EEF7F0] flex items-center justify-center px-6">
+      {/* ===== BACKGROUND ===== */}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
-              Username
-            </label>
-            <input
-              type="text"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent transition-all"
-              placeholder="Masukkan username"
+      {/* Gradient Glow */}
+      <div className="absolute top-[-120px] left-[-100px] w-[500px] h-[500px] bg-green-300/30 blur-3xl rounded-full" />
+
+      <div className="absolute bottom-[-150px] right-[-100px] w-[500px] h-[500px] bg-blue-300/30 blur-3xl rounded-full" />
+
+      {/* Grid */}
+      <div
+        className="absolute inset-0 opacity-[0.05]"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(0,0,0,0.2) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,0,0,0.2) 1px, transparent 1px)
+          `,
+          backgroundSize: '42px 42px',
+        }}
+      />
+
+      {/* Connection Network */}
+      <svg
+        className="absolute inset-0 w-full h-full"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <defs>
+          <linearGradient id="networkLine" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#16A34A" />
+            <stop offset="100%" stopColor="#60A5FA" />
+          </linearGradient>
+        </defs>
+
+        {/* Curved lines */}
+        <path
+          d="M0 180 Q 320 120 650 260 T 1500 220"
+          stroke="url(#networkLine)"
+          strokeWidth="2"
+          opacity="0.15"
+          fill="none"
+        />
+
+        <path
+          d="M-100 480 Q 300 340 760 440 T 1600 400"
+          stroke="url(#networkLine)"
+          strokeWidth="2"
+          opacity="0.15"
+          fill="none"
+        />
+
+        <path
+          d="M250 0 Q 600 250 980 180 T 1500 260"
+          stroke="url(#networkLine)"
+          strokeWidth="2"
+          opacity="0.15"
+          fill="none"
+        />
+
+        {/* Nodes */}
+        {[
+          [180, 160],
+          [450, 220],
+          [780, 180],
+          [1100, 240],
+          [320, 400],
+          [700, 450],
+          [980, 390],
+        ].map(([cx, cy], i) => (
+          <g key={i}>
+            <circle
+              cx={cx}
+              cy={cy}
+              r="6"
+              fill="#16A34A"
+              opacity="0.8"
             />
-          </div>
-
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent transition-all"
-              placeholder="Masukkan password"
+            <circle
+              cx={cx}
+              cy={cy}
+              r="18"
+              fill="#16A34A"
+              opacity="0.08"
             />
-          </div>
+          </g>
+        ))}
+      </svg>
 
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-              {error}
+      {/* Decorative Circles */}
+      <div className="absolute top-24 left-24 w-44 h-44 border border-green-400/10 rounded-full" />
+      <div className="absolute bottom-32 left-44 w-72 h-72 border border-blue-400/10 rounded-full" />
+      <div className="absolute top-20 right-28 w-60 h-60 border border-cyan-400/10 rounded-full" />
+
+      {/* ===== LOGIN CARD ===== */}
+
+      <div className="relative z-10 w-full max-w-[400px]">
+        <div className="rounded-3xl bg-white/90 backdrop-blur-xl border border-white shadow-[0_20px_50px_rgba(15,23,42,0.12)] px-8 py-9">
+          {/* Logo */}
+          <div className="flex justify-center mb-5">
+            <div className="w-[88px] h-[88px] rounded-full bg-black border-4 border-white shadow-lg overflow-hidden flex items-center justify-center">
+              <img
+                src="/logo-nusanet.png"
+                alt="Nusanet"
+                className="w-full h-full object-cover"
+              />
             </div>
-          )}
+          </div>
 
-          <button
-            type="submit"
-            className="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors font-medium"
-          >
-            Login
-          </button>
-        </form>
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-[30px] font-semibold text-gray-900 leading-tight">
+              VP Access Business Dashboard
+            </h1>
 
-        <p className="text-xs text-gray-500 text-center mt-6">
-          Demo: Gunakan username dan password apapun untuk login
-        </p>
+            <p className="mt-2 text-sm text-gray-500 leading-relaxed">
+              Masukkan ID Karyawan dan Password anda untuk login.
+            </p>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* ID */}
+            <div>
+              <label className="block text-sm font-medium text-gray-800 mb-2">
+                ID Karyawan
+              </label>
+
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full h-12 rounded-xl border border-gray-300 bg-white px-4 text-sm outline-none transition-all focus:border-green-500 focus:ring-4 focus:ring-green-100"
+              />
+            </div>
+
+            {/* Password */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-medium text-gray-800">
+                  Password
+                </label>
+
+                <button
+                  type="button"
+                  className="text-sm text-gray-500 hover:text-green-600 transition-colors"
+                >
+                  Lupa password?
+                </button>
+              </div>
+
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full h-12 rounded-xl border border-gray-300 bg-white px-4 text-sm outline-none transition-all focus:border-green-500 focus:ring-4 focus:ring-green-100"
+              />
+            </div>
+
+            {/* Error */}
+            {error && (
+              <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+                {error}
+              </div>
+            )}
+
+            {/* Button */}
+            <button
+              type="submit"
+              className="w-full h-12 rounded-xl bg-gradient-to-r from-green-600 to-green-500 text-white font-medium shadow-lg shadow-green-500/20 hover:scale-[1.01] hover:from-green-700 hover:to-green-600 active:scale-[0.99] transition-all"
+            >
+              Login
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );
