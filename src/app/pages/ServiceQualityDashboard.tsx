@@ -1,213 +1,278 @@
-import { Star, TrendingUp, AlertCircle, CheckCircle } from 'lucide-react';
-import { LineChart, Line, BarChart, Bar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { MetricCard } from '../components/MetricCard';
-import { ChartCard } from '../components/ChartCard';
+import { useState } from 'react';
 
-const npsData = [
-  { month: 'Jan', nps: 68 },
-  { month: 'Feb', nps: 70 },
-  { month: 'Mar', nps: 72 },
-  { month: 'Apr', nps: 71 },
-  { month: 'Mei', nps: 74 },
-  { month: 'Jun', nps: 76 },
-  { month: 'Jul', nps: 75 },
-  { month: 'Agu', nps: 77 },
-  { month: 'Sep', nps: 78 },
-  { month: 'Okt', nps: 79 },
-  { month: 'Nov', nps: 80 },
-  { month: 'Des', nps: 82 },
-];
-
-const ticketData = [
-  { month: 'Jan', total: 245, resolved: 228, avgTime: 4.2 },
-  { month: 'Feb', total: 232, resolved: 221, avgTime: 3.8 },
-  { month: 'Mar', total: 258, resolved: 240, avgTime: 4.1 },
-  { month: 'Apr', total: 221, resolved: 215, avgTime: 3.5 },
-  { month: 'Mei', total: 198, resolved: 192, avgTime: 3.2 },
-  { month: 'Jun', total: 205, resolved: 199, avgTime: 3.0 },
-  { month: 'Jul', total: 189, resolved: 185, avgTime: 2.8 },
-  { month: 'Agu', total: 215, resolved: 209, avgTime: 3.1 },
-  { month: 'Sep', total: 192, resolved: 188, avgTime: 2.9 },
-  { month: 'Okt', total: 178, resolved: 175, avgTime: 2.7 },
-  { month: 'Nov', total: 165, resolved: 163, avgTime: 2.5 },
-  { month: 'Des', total: 152, resolved: 150, avgTime: 2.3 },
-];
-
-const qualityMetrics = [
-  { subject: 'Network Quality', value: 85, fullMark: 100 },
-  { subject: 'Response Time', value: 78, fullMark: 100 },
-  { subject: 'Resolution Rate', value: 92, fullMark: 100 },
-  { subject: 'Customer Satisfaction', value: 88, fullMark: 100 },
-  { subject: 'Installation Quality', value: 82, fullMark: 100 },
-];
-
-const slaMetrics = [
-  { metric: 'Network Uptime', target: 99.9, actual: 99.92, status: 'Met' },
-  { metric: 'First Response Time', target: 2, actual: 1.8, status: 'Met' },
-  { metric: 'Resolution Time', target: 24, actual: 18.5, status: 'Met' },
-  { metric: 'Installation Timeline', target: 7, actual: 5.2, status: 'Met' },
-];
+import {
+  MessageCircle,
+  MessageSquareWarning,
+  CheckCheck,
+  BadgeCheck,
+  Repeat,
+  ShieldAlert,
+  ArrowUp,
+} from 'lucide-react';
 
 export default function ServiceQualityDashboard() {
-  const currentNPS = npsData[npsData.length - 1].nps;
-  const currentTicket = ticketData[ticketData.length - 1];
-  const resolutionRate = ((currentTicket.resolved / currentTicket.total) * 100).toFixed(1);
+  const [activeTab, setActiveTab] = useState<
+    'lagging' | 'leading'
+  >('lagging');
 
   return (
     <div className="p-6 md:p-8">
       <div className="max-w-[1800px] mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-semibold text-foreground mb-2">
-            Dashboard VP Access Business
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Service Quality Metrics • {new Date().toLocaleDateString('id-ID', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            })}
-          </p>
-        </div>
 
-        {/* KPI Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <MetricCard
-            title="Net Promoter Score"
-            value={currentNPS.toString()}
-            subtitle="bulan ini"
-            change="+2 poin"
-            trend="up"
-            icon={Star}
-            color="purple"
-          />
-          <MetricCard
-            title="Ticket Resolution Rate"
-            value={`${resolutionRate}%`}
-            subtitle={`${currentTicket.resolved}/${currentTicket.total} tickets`}
-            change="+1.2%"
-            trend="up"
-            icon={CheckCircle}
-            color="green"
-          />
-          <MetricCard
-            title="Avg Resolution Time"
-            value={`${currentTicket.avgTime}h`}
-            subtitle="waktu rata-rata penyelesaian"
-            change="-0.2h"
-            trend="down"
-            icon={TrendingUp}
-            color="cyan"
-          />
-          <MetricCard
-            title="Open Tickets"
-            value={(currentTicket.total - currentTicket.resolved).toString()}
-            subtitle="sedang ditangani"
-            change="-12.5%"
-            trend="down"
-            icon={AlertCircle}
-            color="yellow"
-          />
-        </div>
+        {/* ================================================= */}
+        {/* HEADER */}
+        {/* ================================================= */}
 
-        {/* Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <ChartCard title="Net Promoter Score Trend" subtitle="skor kepuasan pelanggan">
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={npsData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e4e4e7" />
-                <XAxis dataKey="month" stroke="#71717a" style={{ fontSize: '12px' }} />
-                <YAxis stroke="#71717a" style={{ fontSize: '12px' }} domain={[0, 100]} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#ffffff',
-                    border: '1px solid #e4e4e7',
-                    borderRadius: '8px',
-                  }}
-                  formatter={(value: number) => [value, 'NPS']}
-                />
-                <Line key="line-nps" type="monotone" dataKey="nps" stroke="#9333ea" strokeWidth={2} dot={{ fill: '#9333ea', r: 3 }} />
-              </LineChart>
-            </ResponsiveContainer>
-          </ChartCard>
-
-          <ChartCard title="Support Tickets" subtitle="total dan resolved per bulan">
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={ticketData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e4e4e7" />
-                <XAxis dataKey="month" stroke="#71717a" style={{ fontSize: '12px' }} />
-                <YAxis stroke="#71717a" style={{ fontSize: '12px' }} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#ffffff',
-                    border: '1px solid #e4e4e7',
-                    borderRadius: '8px',
-                  }}
-                />
-                <Bar key="bar-total" dataKey="total" fill="#94a3b8" name="Total" radius={[4, 4, 0, 0]} />
-                <Bar key="bar-resolved" dataKey="resolved" fill="#16a34a" name="Resolved" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </ChartCard>
-        </div>
-
-        {/* Quality Metrics */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <ChartCard title="Quality Metrics Overview" subtitle="performa multi-dimensi">
-            <ResponsiveContainer width="100%" height={350}>
-              <RadarChart data={qualityMetrics}>
-                <PolarGrid stroke="#e4e4e7" />
-                <PolarAngleAxis dataKey="subject" style={{ fontSize: '11px' }} />
-                <PolarRadiusAxis angle={90} domain={[0, 100]} style={{ fontSize: '10px' }} />
-                <Radar key="radar-score" name="Score" dataKey="value" stroke="#16a34a" fill="#16a34a" fillOpacity={0.3} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#ffffff',
-                    border: '1px solid #e4e4e7',
-                    borderRadius: '8px',
-                  }}
-                />
-              </RadarChart>
-            </ResponsiveContainer>
-          </ChartCard>
+        <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4 mb-8">
 
           <div>
-            <h2 className="text-xl font-semibold text-foreground mb-6">
-              SLA Performance
-            </h2>
-            <div className="bg-card border border-border rounded-lg overflow-hidden">
-              <table className="w-full">
-                <thead className="bg-muted">
-                  <tr>
-                    <th className="text-left py-3 px-6 text-sm font-medium text-foreground">Metric</th>
-                    <th className="text-right py-3 px-6 text-sm font-medium text-foreground">Target</th>
-                    <th className="text-right py-3 px-6 text-sm font-medium text-foreground">Actual</th>
-                    <th className="text-right py-3 px-6 text-sm font-medium text-foreground">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {slaMetrics.map((item, index) => (
-                    <tr key={index} className="hover:bg-muted/50">
-                      <td className="py-4 px-6 font-medium text-foreground">{item.metric}</td>
-                      <td className="py-4 px-6 text-right text-muted-foreground">
-                        {item.metric.includes('Time') || item.metric.includes('Timeline') ? `${item.target}h` : `${item.target}%`}
-                      </td>
-                      <td className="py-4 px-6 text-right font-semibold text-foreground">
-                        {item.metric.includes('Time') || item.metric.includes('Timeline') ? `${item.actual}h` : `${item.actual}%`}
-                      </td>
-                      <td className="py-4 px-6 text-right">
-                        <span className="inline-flex items-center px-2 py-1 bg-green-50 text-green-700 rounded text-sm font-semibold">
-                          {item.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <h1 className="text-3xl font-semibold text-foreground mb-2">
+              Dashboard - Service Quality Metric
+            </h1>
+
+            <p className="text-sm text-muted-foreground">
+              Rekap dari pertumbuhan penjualan •{' '}
+              {new Date().toLocaleDateString('id-ID', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </p>
+          </div>
+
+          <div className="flex gap-3">
+
+            <select className="h-11 px-4 rounded-lg border border-border bg-background text-sm min-w-[160px]">
+              <option>All Branch</option>
+            </select>
+
+            <select className="h-11 px-4 rounded-lg border border-border bg-background text-sm min-w-[160px]">
+              <option>This Month</option>
+            </select>
+
           </div>
         </div>
+
+        {/* ================================================= */}
+        {/* TABS */}
+        {/* ================================================= */}
+
+        <div className="flex gap-6 border-b border-border mb-8">
+
+          <button
+            onClick={() => setActiveTab('lagging')}
+            className={`pb-3 text-sm font-medium relative transition-colors ${
+              activeTab === 'lagging'
+                ? 'text-green-600'
+                : 'text-muted-foreground'
+            }`}
+          >
+            Lagging Indicator
+
+            {activeTab === 'lagging' && (
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-green-600" />
+            )}
+          </button>
+
+          <button
+            onClick={() => setActiveTab('leading')}
+            className={`pb-3 text-sm font-medium relative transition-colors ${
+              activeTab === 'leading'
+                ? 'text-green-600'
+                : 'text-muted-foreground'
+            }`}
+          >
+            Leading Indicator
+
+            {activeTab === 'leading' && (
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-green-600" />
+            )}
+          </button>
+
+        </div>
+
+        {/* ================================================= */}
+        {/* LAGGING */}
+        {/* ================================================= */}
+
+        {activeTab === 'lagging' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-[980px]">
+
+            {/* TOTAL TIKET */}
+            <div className="bg-card border border-border rounded-xl p-6 relative min-h-[170px]">
+
+              <div className="absolute top-6 right-6">
+                <div className="px-3 py-1 rounded-full bg-red-100 text-red-600 text-xs font-medium flex items-center gap-1">
+                  <ArrowUp className="w-3 h-3" />
+                  8.3%
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 mb-6">
+                <MessageCircle className="w-5 h-5 text-red-500" />
+
+                <span className="text-lg text-muted-foreground font-medium">
+                  Total Tiket
+                </span>
+              </div>
+
+              <h2 className="text-6xl font-semibold mb-5">
+                54
+              </h2>
+
+              <p className="text-muted-foreground text-lg">
+                Bulan ini
+              </p>
+            </div>
+
+            {/* TOTAL KOMPLAIN */}
+            <div className="bg-card border border-border rounded-xl p-6 relative min-h-[170px]">
+
+              <div className="absolute top-6 right-6">
+                <div className="px-3 py-1 rounded-full bg-red-100 text-red-600 text-xs font-medium flex items-center gap-1">
+                  <ArrowUp className="w-3 h-3" />
+                  3.2%
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 mb-6">
+                <MessageSquareWarning className="w-5 h-5 text-blue-500" />
+
+                <span className="text-lg text-muted-foreground font-medium">
+                  Total Komplain Customer
+                </span>
+              </div>
+
+              <h2 className="text-6xl font-semibold mb-5">
+                48
+              </h2>
+
+              <p className="text-muted-foreground text-lg">
+                Bulan ini
+              </p>
+            </div>
+
+            {/* SOLVED CUSTOMER */}
+            <div className="bg-card border border-border rounded-xl p-6 relative min-h-[170px]">
+
+              <div className="absolute top-6 right-6">
+                <div className="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium flex items-center gap-1">
+                  <ArrowUp className="w-3 h-3" />
+                  8.4%
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 mb-6">
+                <CheckCheck className="w-5 h-5 text-blue-500" />
+
+                <span className="text-lg text-muted-foreground font-medium">
+                  Solved Customers
+                </span>
+              </div>
+
+              <h2 className="text-6xl font-semibold mb-5">
+                69%
+              </h2>
+
+              <p className="text-muted-foreground text-lg">
+                Bulan ini
+              </p>
+            </div>
+
+            {/* TOTAL SOLVED */}
+            <div className="bg-card border border-border rounded-xl p-6 relative min-h-[170px]">
+
+              <div className="absolute top-6 right-6">
+                <div className="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium flex items-center gap-1">
+                  <ArrowUp className="w-3 h-3" />
+                  3.2%
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 mb-6">
+                <BadgeCheck className="w-5 h-5 text-blue-500" />
+
+                <span className="text-lg text-muted-foreground font-medium">
+                  Total Solved
+                </span>
+              </div>
+
+              <h2 className="text-6xl font-semibold mb-5">
+                33
+              </h2>
+
+              <p className="text-muted-foreground text-lg">
+                Bulan ini
+              </p>
+            </div>
+
+          </div>
+        )}
+
+        {/* ================================================= */}
+        {/* LEADING */}
+        {/* ================================================= */}
+
+        {activeTab === 'leading' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-[980px]">
+
+            {/* REPEAT ISSUE */}
+            <div className="bg-card border border-border rounded-xl p-6 relative min-h-[190px]">
+
+              <div className="absolute top-6 right-6">
+                <div className="px-3 py-1 rounded-full bg-red-100 text-red-600 text-xs font-medium flex items-center gap-1">
+                  <ArrowUp className="w-3 h-3" />
+                  12.5%
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 mb-6">
+                <Repeat className="w-5 h-5 text-violet-500" />
+
+                <span className="text-lg text-muted-foreground font-medium">
+                  Repeat Issue Rate
+                </span>
+              </div>
+
+              <h2 className="text-6xl font-semibold mb-5">
+                18%
+              </h2>
+
+              <p className="text-muted-foreground text-lg">
+                Compare bulan lalu
+              </p>
+            </div>
+
+            {/* NETWORK INCIDENT */}
+            <div className="bg-card border border-border rounded-xl p-6 relative min-h-[190px]">
+
+              <div className="absolute top-6 right-6">
+                <div className="px-3 py-1 rounded-full bg-red-100 text-red-600 text-xs font-medium flex items-center gap-1">
+                  <ArrowUp className="w-3 h-3" />
+                  8.1%
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 mb-6">
+                <ShieldAlert className="w-5 h-5 text-orange-500" />
+
+                <span className="text-lg text-muted-foreground font-medium">
+                  Network Incident
+                </span>
+              </div>
+
+              <h2 className="text-6xl font-semibold mb-5">
+                12
+              </h2>
+
+              <p className="text-muted-foreground text-lg">
+                Bulan ini
+              </p>
+            </div>
+
+          </div>
+        )}
       </div>
     </div>
   );
