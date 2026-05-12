@@ -64,14 +64,14 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-  {
-    path: "/target-revenue",
-    element: (
-      <ProtectedRoute>
-        <DashboardLayout>
-          <TargetRevenue />
-        </DashboardLayout>
-      </ProtectedRoute>
-    ),
-  },
+ {
+  path: '/target-revenue',
+  element: (
+    <ProtectedRoute>
+      <DashboardLayout>
+        <TargetRevenue />
+      </DashboardLayout>
+    </ProtectedRoute>
+  ),
+},
 ]);
