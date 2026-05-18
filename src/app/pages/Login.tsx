@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../contexts/AuthContext';
 
+const REVENUE_ACCESS_IDS = ['0200622', '0209901', '0202111'];
+
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -14,12 +16,33 @@ export default function Login() {
     e.preventDefault();
     setError('');
 
-    if (username && password) {
-      login(username);
-      navigate('/dashboard/growth');
-    } else {
+    if (!username || !password) {
       setError('ID Karyawan dan Password harus diisi');
+      return;
     }
+
+    const hasRevenueAccess = REVENUE_ACCESS_IDS.includes(username);
+
+    // Password Logic
+    const validPassword = hasRevenueAccess
+      ? password === 'antusias123'
+      : password === 'nusanet123';
+
+    if (!validPassword) {
+      setError('Password salah');
+      return;
+    }
+
+    // Save auth
+    login(username);
+
+    // Save access flag
+    localStorage.setItem(
+      'hasRevenueAccess',
+      JSON.stringify(hasRevenueAccess)
+    );
+
+    navigate('/dashboard/growth');
   };
 
   return (
@@ -55,7 +78,6 @@ export default function Login() {
           </linearGradient>
         </defs>
 
-        {/* Curved lines */}
         <path
           d="M0 180 Q 320 120 650 260 T 1500 220"
           stroke="url(#networkLine)"

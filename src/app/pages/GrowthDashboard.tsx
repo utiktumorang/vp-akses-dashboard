@@ -159,7 +159,7 @@ export default function GrowthDashboard() {
                     </span>
                   </div>
 
-                  <h2 className="text-7xl font-semibold mb-5">
+                  <h2 className="text-5xl font-semibold mb-5">
                     93.5%
                   </h2>
 
@@ -186,7 +186,7 @@ export default function GrowthDashboard() {
                     </span>
                   </div>
 
-                  <h2 className="text-6xl font-semibold mb-5">
+                  <h2 className="text-4xl font-semibold mb-5">
                     Rp 42 Jt
                   </h2>
 
@@ -213,7 +213,7 @@ export default function GrowthDashboard() {
                     </span>
                   </div>
 
-                  <h2 className="text-6xl font-semibold mb-5">
+                  <h2 className="text-4xl font-semibold mb-5">
                     Rp 185 Jt
                   </h2>
 
@@ -379,7 +379,7 @@ export default function GrowthDashboard() {
                   </span>
                 </div>
 
-                <h2 className="text-6xl font-semibold mb-6">
+                <h2 className="text-4xl font-semibold mb-6">
                   Rp 99.8 Jt
                 </h2>
 
@@ -438,7 +438,7 @@ export default function GrowthDashboard() {
                   </span>
                 </div>
 
-                <h2 className="text-6xl font-semibold mb-8">
+                <h2 className="text-4xl font-semibold mb-8">
                   Rp 99.8 Jt
                 </h2>
 
@@ -465,7 +465,7 @@ export default function GrowthDashboard() {
                   </span>
                 </div>
 
-                <h2 className="text-6xl font-semibold mb-6">
+                <h2 className="text-4xl font-semibold mb-6">
                   Rp 3.9 Jt
                 </h2>
 
@@ -633,7 +633,7 @@ export default function GrowthDashboard() {
             </span>
           </div>
 
-          <h2 className="text-7xl font-semibold mb-3">
+          <h2 className="text-5xl font-semibold mb-3">
             Rp. 2.4 M
           </h2>
 
@@ -659,7 +659,7 @@ export default function GrowthDashboard() {
             </span>
           </div>
 
-          <h2 className="text-6xl font-semibold mb-6">
+          <h2 className="text-4xl font-semibold mb-6">
             68.5%
           </h2>
 
@@ -749,7 +749,7 @@ export default function GrowthDashboard() {
             {item.title}
           </h4>
 
-          <h3 className="text-6xl font-semibold text-foreground mb-4">
+          <h3 className="text-4xl font-semibold text-foreground mb-4">
             {item.value}
           </h3>
 

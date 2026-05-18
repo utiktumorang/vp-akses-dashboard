@@ -1,4 +1,9 @@
-import { createBrowserRouter, Navigate, Outlet } from "react-router";
+import {
+  createBrowserRouter,
+  Navigate,
+  Outlet,
+} from "react-router";
+
 import Login from "./pages/Login";
 import GrowthDashboard from "./pages/GrowthDashboard";
 import RetentionDashboard from "./pages/RetentionDashboard";
@@ -6,9 +11,10 @@ import ServiceQualityDashboard from "./pages/ServiceQualityDashboard";
 import RevenueDetail from "./pages/RevenueDetail";
 import ChurnRateDetail from "./pages/ChurnRateDetail";
 import TargetRevenue from "./pages/TargetRevenue";
+import TargetRevenueHistory from "./pages/TargetRevenueHistory";
+
 import { DashboardLayout } from "./components/DashboardLayout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
-import TargetRevenueHistory from './pages/TargetRevenueHistory';
 
 const DashboardWrapper = () => (
   <ProtectedRoute>
@@ -23,10 +29,12 @@ export const router = createBrowserRouter([
     path: "/login",
     Component: Login,
   },
+
   {
     path: "/",
     element: <Navigate to="/dashboard/growth" replace />,
   },
+
   {
     path: "/dashboard",
     element: <DashboardWrapper />,
@@ -45,6 +53,7 @@ export const router = createBrowserRouter([
       },
     ],
   },
+
   {
     path: "/revenue",
     element: (
@@ -55,6 +64,7 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
+
   {
     path: "/churn-rate",
     element: (
@@ -65,25 +75,26 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
- {
-  path: '/target-revenue',
-  element: (
-    <ProtectedRoute>
-      <DashboardLayout>
-        <TargetRevenue />
-      </DashboardLayout>
-    </ProtectedRoute>
-  ),
-},
-{
-  path: "/target-revenue/history",
-  element: (
-    <ProtectedRoute>
-      <DashboardLayout>
-        <TargetRevenueHistory />
-      </DashboardLayout>
-    </ProtectedRoute>
-  ),
-},
 
+  {
+    path: "/target-revenue",
+    element: (
+      <ProtectedRoute>
+        <DashboardLayout>
+          <TargetRevenue />
+        </DashboardLayout>
+      </ProtectedRoute>
+    ),
+  },
+
+  {
+    path: "/target-revenue/history",
+    element: (
+      <ProtectedRoute>
+        <DashboardLayout>
+          <TargetRevenueHistory />
+        </DashboardLayout>
+      </ProtectedRoute>
+    ),
+  },
 ]);

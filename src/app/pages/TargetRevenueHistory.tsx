@@ -47,6 +47,20 @@ const historyData = [
 ];
 
 export default function TargetRevenueHistory() {
+const employeeId = localStorage.getItem("employee_id");
+
+const allowedRevenueIds = [
+  "0200622",
+  "0209901",
+  "0202111",
+];
+
+const hasRevenueAccess = allowedRevenueIds.includes(employeeId || "");
+
+if (!hasRevenueAccess) {
+  return <div>Access Denied</div>;
+}
+
   const renderIcon = (type: string) => {
     switch (type) {
       case "lock":

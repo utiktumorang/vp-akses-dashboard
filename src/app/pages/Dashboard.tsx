@@ -5,6 +5,25 @@ import { useState } from 'react';
 import { MetricCard } from '../components/MetricCard';
 import { SalesTeamDetailCard } from '../components/SalesTeamDetailCard';
 import { ChartCard } from '../components/ChartCard';
+import { ReactNode } from "react";
+import { Sidebar } from "../components/ui/sidebar";
+
+interface DashboardLayoutProps {
+  children: ReactNode;
+}
+
+export function DashboardLayout({
+  children,
+}: DashboardLayoutProps) {
+  return (
+    <div className="flex min-h-screen bg-background">
+      <Sidebar />
+      <main className="flex-1 overflow-auto">
+        {children}
+      </main>
+    </div>
+  );
+}
 
 // Mock data
 const revenueData = [
@@ -188,28 +207,55 @@ export default function Dashboard() {
     }
   };
 
-  const activityData = getActivityData();
+const activityData = getActivityData();
 
-  // Calculate total activities
-  const totalPlan = activityData.reduce((sum, item) => sum + item.plan, 0);
-  const totalDone = activityData.reduce((sum, item) => sum + item.done, 0);
-  const completionRate = totalPlan > 0 ? ((totalDone / totalPlan) * 100).toFixed(1) : '0';
+// Revenue Access
+const employeeId = localStorage.getItem("employee_id");
 
-  // Calculate total opportunities and leads
-  const totalOpportunities = salesTeams.reduce((sum, team) => sum + team.opportunities, 0);
-  const totalLeads = salesTeams.reduce((sum, team) => sum + team.leads, 0);
-  const leadToOppRate = totalLeads > 0 ? ((totalOpportunities / totalLeads) * 100).toFixed(1) : '0';
+const allowedRevenueIds = [
+  "0200622",
+  "0209901",
+  "0202111",
+];
 
-  return (
-    <div className="min-h-screen bg-background p-6 md:p-8">
-      <div className="max-w-[1800px] mx-auto">
-        {/* Header */}
-        <div className="mb-8">
+const hasRevenueAccess = allowedRevenueIds.includes(employeeId || "");
+
+// Calculate total activities
+const totalPlan = activityData.reduce((sum, item) => sum + item.plan, 0);
+const totalDone = activityData.reduce((sum, item) => sum + item.done, 0);
+const completionRate = totalPlan > 0
+  ? ((totalDone / totalPlan) * 100).toFixed(1)
+  : '0';
+
+// Calculate total opportunities and leads
+const totalOpportunities = salesTeams.reduce(
+  (sum, team) => sum + team.opportunities,
+  0
+);
+
+const totalLeads = salesTeams.reduce(
+  (sum, team) => sum + team.leads,
+  0
+);
+
+const leadToOppRate = totalLeads > 0
+  ? ((totalOpportunities / totalLeads) * 100).toFixed(1)
+  : '0';
+
+return (
+  <div className="min-h-screen bg-background p-6 md:p-8">
+    <div className="max-w-[1800px] mx-auto">
+
+      {/* Header */}
+      <div className="mb-8 flex items-center justify-between">
+        <div>
           <h1 className="text-3xl font-semibold text-foreground mb-2">
             Dashboard VP Access Business
           </h1>
+
           <p className="text-sm text-muted-foreground">
-            Dashboard VP Sales • {new Date().toLocaleDateString('id-ID', {
+            Dashboard VP Sales •{' '}
+            {new Date().toLocaleDateString('id-ID', {
               weekday: 'long',
               year: 'numeric',
               month: 'long',
@@ -218,45 +264,68 @@ export default function Dashboard() {
           </p>
         </div>
 
-        {/* KPI Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <MetricCard
-            title="Aktivitas Terlaksana"
-            value={totalDone.toString()}
-            subtitle={`dari ${totalPlan} plan (${completionRate}%)`}
-            change="+8.3%"
-            trend="up"
-            icon={Activity}
-            color="green"
-          />
-          <MetricCard
-            title="Migrasi Wireless → Fiber"
-            value="487"
-            subtitle="bulan ini"
-            change="+23.7%"
-            trend="up"
-            icon={Zap}
-            color="yellow"
-          />
-          <MetricCard
-            title="Revenue Bulanan"
-            value="Rp 225M"
-            subtitle="Desember 2025"
-            change="+6.1%"
-            trend="up"
-            icon={DollarSign}
-            color="purple"
-          />
-          <MetricCard
-            title="Total Opportunity"
-            value={totalOpportunities.toString()}
-            subtitle={`dari ${totalLeads} leads (${leadToOppRate}%)`}
-            change="+12.5%"
-            trend="up"
-            icon={Users}
-            color="cyan"
-          />
-        </div>
+        {/* Revenue Access Menu */}
+        {hasRevenueAccess && (
+          <div className="flex items-center gap-3">
+            <Link
+              to="/target-revenue"
+              className="px-4 py-2 rounded-lg bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors"
+            >
+              Target Revenue
+            </Link>
+
+            <Link
+              to="/history-target-revenue"
+              className="px-4 py-2 rounded-lg border border-border text-sm font-medium hover:bg-muted transition-colors"
+            >
+              History Target Revenue
+            </Link>
+          </div>
+        )}
+      </div>
+
+      {/* KPI Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <MetricCard
+          title="Aktivitas Terlaksana"
+          value={totalDone.toString()}
+          subtitle={`dari ${totalPlan} plan (${completionRate}%)`}
+          change="+8.3%"
+          trend="up"
+          icon={Activity}
+          color="green"
+        />
+
+        <MetricCard
+          title="Migrasi Wireless → Fiber"
+          value="487"
+          subtitle="bulan ini"
+          change="+23.7%"
+          trend="up"
+          icon={Zap}
+          color="yellow"
+        />
+
+        <MetricCard
+          title="Revenue Bulanan"
+          value="Rp 225M"
+          subtitle="Desember 2025"
+          change="+6.1%"
+          trend="up"
+          icon={DollarSign}
+          color="purple"
+        />
+
+        <MetricCard
+          title="Total Opportunity"
+          value={totalOpportunities.toString()}
+          subtitle={`dari ${totalLeads} leads (${leadToOppRate}%)`}
+          change="+12.5%"
+          trend="up"
+          icon={Users}
+          color="cyan"
+        />
+      </div>
 
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
